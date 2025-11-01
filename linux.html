@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Linux (WIP) v2.6</title>
+    <title>Linux (WIP) v2.7</title>
     <style>
         body {
             margin: 0;
@@ -129,18 +129,18 @@
             
             try {
                 var emulator = new V86Starter({
-                    wasm_path: "https://cdn.jsdelivr.net/npm/v86@latest/build/v86.wasm",
-                    memory_size: 512 * 1024 * 1024,
-                    vga_memory_size: 2 * 1024 * 1024,
+                    wasm_path: "https://unpkg.com/v86@latest/build/v86.wasm",
+                    memory_size: 128 * 1024 * 1024,
+                    vga_memory_size: 8 * 1024 * 1024,
                     screen_container: screenContainer,
                     bios: {
-                        url: "https://cdn.jsdelivr.net/npm/v86@latest/bios/seabios.bin",
+                        url: "https://unpkg.com/v86@latest/bios/seabios.bin",
                     },
                     vga_bios: {
-                        url: "https://cdn.jsdelivr.net/npm/v86@latest/bios/vgabios.bin",
+                        url: "https://unpkg.com/v86@latest/bios/vgabios.bin",
                     },
                     cdrom: {
-                        url: "Core-current.iso",
+                        url: "https://copy.sh/v86/images/linux3.iso",
                     },
                     autostart: true,
                 });
