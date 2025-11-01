@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Linux (WIP) v2.1</title>
+    <title>Linux (WIP) v2.2</title>
     <style>
         body {
             margin: 0;
@@ -106,6 +106,9 @@
         let totalBytes = 0;
         
         var emulator = new V86({
+            wasm_path: "https://cdn.jsdelivr.net/npm/v86@latest/build/v86.wasm",
+            memory_size: 512 * 1024 * 1024,
+            vga_memory_size: 2 * 1024 * 1024,
             screen_container: document.getElementById("screen_container"),
             bios: {
                 url: "cbios.bin",
