@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Linux (WIP) v2.3</title>
+    <title>Linux (WIP) v2.4</title>
     <style>
         body {
             margin: 0;
@@ -78,6 +78,16 @@
         #screen_container.visible {
             display: block;
         }
+        
+        canvas {
+            border: 1px solid #333;
+        }
+        
+        #error {
+            color: #ff4444;
+            margin-top: 10px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -88,6 +98,7 @@
             <div class="progress-fill" id="progress-fill"></div>
         </div>
         <div id="load-progress">Initializing emulator...</div>
+        <div id="error"></div>
     </div>
     
     <div id="screen_container">
@@ -96,69 +107,88 @@
     
     <script src="https://cdn.jsdelivr.net/npm/v86@latest/build/libv86.js"></script>
     <script>
-        const loadingDiv = document.getElementById('loading');
-        const screenContainer = document.getElementById('screen_container');
-        const loadStatus = document.getElementById('load-status');
-        const loadProgress = document.getElementById('load-progress');
-        const progressFill = document.getElementById('progress-fill');
-        
-        let bytesLoaded = 0;
-        let totalBytes = 0;
-        
-        var emulator = new V86Starter({
-            wasm_path: "https://cdn.jsdelivr.net/npm/v86@latest/build/v86.wasm",
-            vga_memory_size: 2 * 1024 * 1024,
-            memory_size: 512 * 1024 * 1024,
-
-            screen_container: document.getElementById("screen_container"),
-            bios: {
-                url: "cbios.bin",
-                async: true,
-            },
-            vga_bios: {
-                url: "vbios.bin",
-                async: true,
-            },
-            cdrom: {
-                url: "https://archlinux32.agoctrl.org/archisos/archlinux32-2024.07.10-i686.iso",
-                async: true,
-            },
-            autostart: true,
-        });
-        
-        emulator.add_listener("download-progress", function(e) {
-            if (e.total) {
-                totalBytes = e.total;
-                bytesLoaded = e.loaded;
+        // Wait for script to load
+        window.addEventListener('load', function() {
+            const loadingDiv = document.getElementById('loading');
+            const screenContainer = document.getElementById('screen_container');
+            const loadStatus = document.getElementById('load-status');
+            const loadProgress = document.getElementById('load-progress');
+            const progressFill = document.getElementById('progress-fill');
+            const errorDiv = document.getElementById('error');
+            
+            // Check if V86Starter is available
+            if (typeof V86Starter === 'undefined') {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'Error: V86Starter failed to load. Check console for details.';
+                console.error('V86Starter is not defined. The libv86.js script may not have loaded correctly.');
+                return;
+            }
+            
+            let bytesLoaded = 0;
+            let totalBytes = 0;
+            
+            try {
+                var emulator = new V86Starter({
+                    wasm_path: "https://cdn.jsdelivr.net/npm/v86@latest/build/v86.wasm",
+                    memory_size: 512 * 1024 * 1024,
+                    vga_memory_size: 2 * 1024 * 1024,
+                    screen_container: screenContainer,
+                    bios: {
+                        url: "https://cdn.jsdelivr.net/npm/v86@latest/bios/seabios.bin",
+                    },
+                    vga_bios: {
+                        url: "https://cdn.jsdelivr.net/npm/v86@latest/bios/vgabios.bin",
+                    },
+                    cdrom: {
+                        url: "https://archlinux32.agoctrl.org/archisos/archlinux32-2024.07.10-i686.iso",
+                    },
+                    autostart: true,
+                });
                 
-                const percent = Math.round((e.loaded / e.total) * 100);
-                progressFill.style.width = percent + '%';
+                // Track download progress
+                emulator.add_listener("download-progress", function(e) {
+                    if (e.total) {
+                        totalBytes = e.total;
+                        bytesLoaded = e.loaded;
+                        
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        progressFill.style.width = percent + '%';
+                        
+                        const loadedMB = (e.loaded / (1024 * 1024)).toFixed(1);
+                        const totalMB = (e.total / (1024 * 1024)).toFixed(1);
+                        
+                        loadProgress.textContent = `Downloading: ${loadedMB}MB / ${totalMB}MB (${percent}%)`;
+                    }
+                });
                 
-                const loadedMB = (e.loaded / (1024 * 1024)).toFixed(1);
-                const totalMB = (e.total / (1024 * 1024)).toFixed(1);
+                // When emulator finishes loading
+                emulator.add_listener("emulator-loaded", function() {
+                    loadStatus.textContent = "Starting Linux...";
+                    loadProgress.textContent = "Booting operating system...";
+                });
                 
-                loadProgress.textContent = `Downloading: ${loadedMB}MB / ${totalMB}MB (${percent}%)`;
+                // When emulator is ready
+                emulator.add_listener("emulator-ready", function() {
+                    setTimeout(() => {
+                        loadingDiv.classList.add('hidden');
+                        screenContainer.classList.add('visible');
+                    }, 1000);
+                });
+                
+                // Fallback: hide loading after 10 seconds
+                setTimeout(() => {
+                    if (!screenContainer.classList.contains('visible')) {
+                        loadingDiv.classList.add('hidden');
+                        screenContainer.classList.add('visible');
+                    }
+                }, 10000);
+                
+            } catch (error) {
+                errorDiv.style.display = 'block';
+                errorDiv.textContent = 'Error initializing emulator: ' + error.message;
+                console.error('Emulator error:', error);
             }
         });
-        
-        emulator.add_listener("emulator-loaded", function() {
-            loadStatus.textContent = "Starting Linux...";
-            loadProgress.textContent = "Booting operating system...";
-        });
-        
-        emulator.add_listener("emulator-ready", function() {
-            setTimeout(() => {
-                loadingDiv.classList.add('hidden');
-                screenContainer.classList.add('visible');
-            }, 1000);
-        });
-
-        setTimeout(() => {
-            if (!screenContainer.classList.contains('visible')) {
-                loadingDiv.classList.add('hidden');
-                screenContainer.classList.add('visible');
-            }
-        }, 10000);
     </script>
 </body>
 </html>
