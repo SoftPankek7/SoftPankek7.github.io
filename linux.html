@@ -107,8 +107,9 @@
         
         var emulator = new V86({
             wasm_path: "https://cdn.jsdelivr.net/npm/v86@latest/build/v86.wasm",
-            memory_size: 512 * 1024 * 1024,
             vga_memory_size: 2 * 1024 * 1024,
+            memory_size: 512 * 1024 * 1024,
+            
             screen_container: document.getElementById("screen_container"),
             bios: {
                 url: "cbios.bin",
@@ -122,8 +123,6 @@
                 url: "https://archlinux32.agoctrl.org/archisos/archlinux32-2024.07.10-i686.iso",
                 async: true,
             },
-            memory_size: 512 * 1024 * 1024,
-            memory_size: 512 * 1024 * 1024,
             autostart: true,
         });
         
