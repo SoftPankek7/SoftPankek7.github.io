@@ -2,31 +2,160 @@
 <html>
 <head>
     <title>Linux (WIP)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #1a1a1a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        #loading.hidden {
+            display: none;
+        }
+        
+        .spinner {
+            border: 4px solid #333;
+            border-top: 4px solid #4CAF50;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        #load-status {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        
+        #load-progress {
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .progress-bar {
+            width: 300px;
+            height: 20px;
+            background: #333;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #45a049);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        #screen_container {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        #screen_container.visible {
+            display: block;
+        }
+    </style>
 </head>
 <body>
+    <div id="loading">
+        <div class="spinner"></div>
+        <div id="load-status">Loading Linux...</div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <div id="load-progress">Initializing emulator...</div>
+    </div>
+    
     <div id="screen_container">
         <canvas id="screen"></canvas>
     </div>
     
     <script src="https://cdn.jsdelivr.net/npm/v86@latest/build/libv86.js"></script>
     <script>
+        const loadingDiv = document.getElementById('loading');
+        const screenContainer = document.getElementById('screen_container');
+        const loadStatus = document.getElementById('load-status');
+        const loadProgress = document.getElementById('load-progress');
+        const progressFill = document.getElementById('progress-fill');
+        
+        let bytesLoaded = 0;
+        let totalBytes = 0;
+        
         var emulator = new V86Starter({
             screen_container: document.getElementById("screen_container"),
             bios: {
-                url: "path/to/cbios.bin",
+                url: "cbios.bin",
+                async: true,
             },
             vga_bios: {
-                url: "path/to/vbios.bin",
+                url: "vbios.bin",
+                async: true,
             },
             cdrom: {
-<<<<<<< HEAD
                 url: "https://archlinux32.agoctrl.org/archisos/archlinux32-2024.07.10-i686.iso",
-=======
-                url: "path/to/linux.iso",
->>>>>>> parent of 954cd1b (Yup! I candied it up)
+                async: true,
             },
+            memory_size: 512 * 1024 * 1024,
             autostart: true,
         });
+        
+        emulator.add_listener("download-progress", function(e) {
+            if (e.total) {
+                totalBytes = e.total;
+                bytesLoaded = e.loaded;
+                
+                const percent = Math.round((e.loaded / e.total) * 100);
+                progressFill.style.width = percent + '%';
+                
+                const loadedMB = (e.loaded / (1024 * 1024)).toFixed(1);
+                const totalMB = (e.total / (1024 * 1024)).toFixed(1);
+                
+                loadProgress.textContent = `Downloading: ${loadedMB}MB / ${totalMB}MB (${percent}%)`;
+            }
+        });
+        
+        emulator.add_listener("emulator-loaded", function() {
+            loadStatus.textContent = "Starting Linux...";
+            loadProgress.textContent = "Booting operating system...";
+        });
+        
+        emulator.add_listener("emulator-ready", function() {
+            setTimeout(() => {
+                loadingDiv.classList.add('hidden');
+                screenContainer.classList.add('visible');
+            }, 1000);
+        });
+
+        setTimeout(() => {
+            if (!screenContainer.classList.contains('visible')) {
+                loadingDiv.classList.add('hidden');
+                screenContainer.classList.add('visible');
+            }
+        }, 10000);
     </script>
 </body>
 </html>
