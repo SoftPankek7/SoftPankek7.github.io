@@ -1,10 +1,28 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Linux! (WIP)</title>
-  </head>
-  <body>
-    <p>This will soon turn into Linux.</p>
-    <h6>Please be patient 😅</h6>
-  </body>
+<head>
+    <title>Linux (WIP)</title>
+</head>
+<body>
+    <div id="screen_container">
+        <canvas id="screen"></canvas>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/v86@latest/build/libv86.js"></script>
+    <script>
+        var emulator = new V86Starter({
+            screen_container: document.getElementById("screen_container"),
+            bios: {
+                url: "path/to/seabios.bin",
+            },
+            vga_bios: {
+                url: "path/to/vgabios.bin",
+            },
+            cdrom: {
+                url: "path/to/linux.iso",
+            },
+            autostart: true,
+        });
+    </script>
+</body>
 </html>
