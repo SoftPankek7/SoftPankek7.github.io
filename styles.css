@@ -1,0 +1,104 @@
+body {
+    background-color: #323;
+    background-image: url("background.png");
+    font-family: sans-serif;
+    overflow: hidden;
+    padding: 20px;
+}
+
+#container {
+    border-radius: 16px 16px 0px 0px;
+    padding: 20px;
+    color: #eee;
+    outline: 20px, #111;
+    height: 92vh;
+    margin-top: 50px;
+    text-shadow: #111 0 0 25px;
+    user-select: none;
+    font-size: 3vh;
+}
+
+#title {
+    font-family: "WDXL Lubrifont JP N", monospace;
+    font-size: 10vh;
+    text-align: center;
+    margin-bottom: 0;
+
+    background: linear-gradient(90deg, #ffa200, #ff00ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.glass {
+    background: rgba(128, 0, 255, 0.2);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(14.3px);
+    border: 1px solid rgba(255, 255, 255, 0.3);;
+    z-index: 999;
+}
+
+#links {
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+#links a,p {
+    background: linear-gradient(to bottom, #b700ff, #4000ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@keyframes myAnimation {
+    from {
+        font-size: 18.6px;
+    }
+    to {
+        font-size: 25px;
+    }
+}
+
+#links a:hover {
+    animation-name: myAnimation;
+    animation-duration: 0.5s;
+    animation-timing-function: ease;
+}
+
+#links a {
+    animation-play-state: paused;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+    font-weight: 800;
+}
+
+fieldset {
+    border-radius: 20px 20px 0 0;
+    padding: 0;
+
+}
+
+legend {
+    margin-left: 25px;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+
+    text-align: center;
+}
+
+img {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}

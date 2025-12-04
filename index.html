@@ -1,6 +1,36 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h1>I'm Up!</h1>
-  </body>
+    <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=WDXL+Lubrifont+JP+N&family=WDXL+Lubrifont+TC&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="styles.css">
+        <link rel="icon" type="image/x-icon" href="favicon.ico">
+    </head>
+    <body>
+        <div id="container" class="glass">
+            <h1 id="title"><a href="index.html">Charlie Tulip</a></h1>
+            <div id="links">
+                <p>
+
+                <a href="projects.html">Projects</a>  |  
+                <a href="contact.html">Contact</a>  |  
+                <a href="hobbies.html">Hobbies</a>
+            
+                </p>
+            </div>
+
+            <img src="https://avatars.githubusercontent.com/u/186684959?v=1" alt="mlem" class="center" style="margin-top: 20px; border-radius: 20px;" id="pfp">
+            
+        </div>
+    </body>
+    <script>
+        // Cache-Buster for the profile picture there ^
+
+        document.addEventListener("DOMContentLoaded", ()=>{
+            let pfp = document.getElementById("pfp");
+            const random_number = 99999999999999+Math.floor(Math.random() * 1000);
+            pfp.src = "https://avatars.githubusercontent.com/u/186684959?v="+random_number;
+        })
+    </script>
 </html>
